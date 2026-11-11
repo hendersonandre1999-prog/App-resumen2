@@ -1,4 +1,4 @@
-streamlit (primera línea),
-pandas (segunda línea), 
-openpyxl (tercera línea) y 
-pyxlsb (cuarta línea). Guarda los cambios.
+streamlit
+pandas
+openpyxl 
+pyxlsb 
