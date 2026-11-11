@@ -5,8 +5,8 @@ import os
 # Configuración de pantalla completa
 st.set_page_config(page_title="Control Oficial SHIIFT", layout="wide")
 
-ARCHIVO_RESUMEN = "datos_RESUMEN.csv"
-ARCHIVO_MACRO = "datos_Resumen_Macro.csv"
+ARCHIVO_RESUMEN = "datos_resumen.csv"
+ARCHIVO_MACRO = "datos_resumen_macro.csv"
 
 # --- MENÚ LATERAL (ADMINISTRADOR) ---
 with st.sidebar:
@@ -98,7 +98,7 @@ if os.path.exists(ARCHIVO_RESUMEN) and os.path.exists(ARCHIVO_MACRO):
     tab1, tab2 = st.tabs(["📄 MATRIZ RESUMEN", "📊 MATRIZ MACRO"])
     
     with tab1:
-        st.markdown(f"**Registros encontrados: {len(df_filtrado_RESUMEN)}**")
+        st.markdown(f"**Registros encontrados: {len(df_filtrado_resumen)}**")
         st.dataframe(df_filtrado_resumen, use_container_width=True, height=550, hide_index=True)
         
     with tab2:
