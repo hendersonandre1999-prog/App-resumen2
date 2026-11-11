@@ -6,8 +6,8 @@ import os
 st.set_page_config(page_title="Control Oficial SHIIFT", layout="wide")
 
 # Archivos puente para ambas hojas
-ARCHIVO_RESUMEN = "datos_resumen.csv"
-ARCHIVO_MACRO = "datos_resumen_macro.csv"
+ARCHIVO_RESUMEN = "datos_RESUMEN.csv"
+ARCHIVO_MACRO = "datos_Resumen_Macro.csv"
 
 # --- MENÚ LATERAL (ADMINISTRADOR) ---
 with st.sidebar:
@@ -26,7 +26,7 @@ with st.sidebar:
                     
                     # El sistema ahora lee específicamente ambas hojas
                     df_resumen = pd.read_excel(archivo_subido, sheet_name="RESUMEN", engine=engine)
-                    df_macro = pd.read_excel(archivo_subido, sheet_name="RESUMEN MACRO", engine=engine)
+                    df_macro = pd.read_excel(archivo_subido, sheet_name="Resumen Macro", engine=engine)
                     
                     # Se guardan ambos archivos en el servidor para visualización en tiempo real
                     df_resumen.to_csv(ARCHIVO_RESUMEN, index=False)
@@ -34,7 +34,7 @@ with st.sidebar:
                     
                     st.success("¡Hojas RESUMEN y RESUMEN MACRO sincronizadas correctamente!")
                 except ValueError as ve:
-                    st.error("❌ Asegúrate de que el documento contenga exactamente las hojas llamadas 'RESUMEN' y 'RESUMEN MACRO'.")
+                    st.error("❌ Asegúrate de que el documento contenga exactamente las hojas llamadas 'RESUMEN' y 'Resumen Macro'.")
                 except Exception as e:
                     st.error(f"❌ Error en la extracción: {e}")
 
@@ -48,7 +48,7 @@ if os.path.exists(ARCHIVO_RESUMEN) and os.path.exists(ARCHIVO_MACRO):
     df_macro_publico = pd.read_csv(ARCHIVO_MACRO)
     
     # Crear pestañas de navegación superiores (Tabs)
-    tab1, tab2 = st.tabs(["📄 RESUMEN", "📊 RESUMEN MACRO"])
+    tab1, tab2 = st.tabs(["📄 RESUMEN", "📊 Resumen Macro"])
     
     with tab1:
         # Se muestra la tabla expandida a lo ancho de la pantalla y con mayor altura
