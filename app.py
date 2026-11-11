@@ -45,10 +45,10 @@ with st.sidebar:
         password = st.text_input("Contraseña", type="password")
         
         if st.button("Iniciar Sesión", use_container_width=True):
-            if usuario == "admin" and password == "1234":
+            if usuario == "admin" and password == "12345":
                 st.session_state.rol = "Administrador"
                 st.rerun()
-            elif usuario == "visor" and password == "1234":
+            elif usuario == "visor" and password == "12345":
                 st.session_state.rol = "Consulta"
                 st.rerun()
             else:
