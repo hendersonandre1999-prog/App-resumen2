@@ -79,7 +79,7 @@ with st.sidebar:
                             else:
                                 df_master = pd.DataFrame()
                                 for hoja in hojas_validas:
-                                    # header=2 asumiendo que los títulos están en la fila 3 como se validó anteriormente
+                                    # header=2 asegura que lea los títulos desde la fila 3
                                     df_temp = pd.read_excel(archivo_subido, sheet_name=hoja, engine=engine, header=2)
                                     df_temp['FUENTE_MÓDULO'] = hoja
                                     df_master = pd.concat([df_master, df_temp], ignore_index=True)
@@ -123,6 +123,13 @@ col_tip = mapear_col(["TIPO"], "TIPO")
 col_pri = mapear_col(["PRIORIDAD", "PRIORIZACION"], "PRIORIDAD")
 col_fec = mapear_col(["FECHA", "ESTIMADA"], "FECHA")
 
+# --- PROTECCIÓN ANTI-ERRORES (KEYERROR) ---
+# Si el Excel no tiene alguna de estas columnas, el sistema las crea vacías para evitar que la app colapse.
+lista_columnas_seguras = [col_id, col_req, col_mod, col_est, col_res, col_spr, col_fab, col_tip, col_pri, col_fec]
+for columna in lista_columnas_seguras:
+    if columna not in df.columns:
+        df[columna] = "No definido"
+
 # --- 5. MOTOR DE FILTROS DINÁMICOS Y DEPENDIENTES ---
 st.markdown("### 🔍 Buscador y Filtros Dinámicos")
 st.caption("Los filtros están conectados. Al seleccionar una opción, los demás filtros se ajustarán a los datos disponibles.")
@@ -132,44 +139,44 @@ df_filt = df.copy()
 # Fila 1 de Filtros
 f1, f2, f3, f4 = st.columns(4)
 with f1:
-    mod_opts = sorted(df_filt[col_mod].unique())
+    mod_opts = sorted(df_filt[col_mod].astype(str).unique())
     sel_mod = st.multiselect("1. Módulo", mod_opts)
     if sel_mod: df_filt = df_filt[df_filt[col_mod].isin(sel_mod)]
 
 with f2:
-    res_opts = sorted(df_filt[col_res].unique())
+    res_opts = sorted(df_filt[col_res].astype(str).unique())
     sel_res = st.multiselect("2. Responsable", res_opts)
     if sel_res: df_filt = df_filt[df_filt[col_res].isin(sel_res)]
 
 with f3:
-    spr_opts = sorted(df_filt[col_spr].unique())
+    spr_opts = sorted(df_filt[col_spr].astype(str).unique())
     sel_spr = st.multiselect("3. Sprint", spr_opts)
     if sel_spr: df_filt = df_filt[df_filt[col_spr].isin(sel_spr)]
 
 with f4:
-    est_opts = sorted(df_filt[col_est].unique())
+    est_opts = sorted(df_filt[col_est].astype(str).unique())
     sel_est = st.multiselect("4. Estado", est_opts)
     if sel_est: df_filt = df_filt[df_filt[col_est].isin(sel_est)]
 
 # Fila 2 de Filtros
 f5, f6, f7, f8 = st.columns(4)
 with f5:
-    fab_opts = sorted(df_filt[col_fab].unique())
+    fab_opts = sorted(df_filt[col_fab].astype(str).unique())
     sel_fab = st.multiselect("5. Fábrica de Desarrollo", fab_opts)
     if sel_fab: df_filt = df_filt[df_filt[col_fab].isin(sel_fab)]
 
 with f6:
-    pri_opts = sorted(df_filt.get(col_pri, pd.Series(["N/A"])).unique())
+    pri_opts = sorted(df_filt.get(col_pri, pd.Series(["N/A"])).astype(str).unique())
     sel_pri = st.multiselect("6. Prioridad", pri_opts)
     if sel_pri and col_pri in df_filt.columns: df_filt = df_filt[df_filt[col_pri].isin(sel_pri)]
 
 with f7:
-    tip_opts = sorted(df_filt.get(col_tip, pd.Series(["N/A"])).unique())
+    tip_opts = sorted(df_filt.get(col_tip, pd.Series(["N/A"])).astype(str).unique())
     sel_tip = st.multiselect("7. Tipo", tip_opts)
     if sel_tip and col_tip in df_filt.columns: df_filt = df_filt[df_filt[col_tip].isin(sel_tip)]
 
 with f8:
-    fec_opts = sorted(df_filt.get(col_fec, pd.Series(["N/A"])).unique())
+    fec_opts = sorted(df_filt.get(col_fec, pd.Series(["N/A"])).astype(str).unique())
     sel_fec = st.multiselect("8. Fecha Estimada", fec_opts)
     if sel_fec and col_fec in df_filt.columns: df_filt = df_filt[df_filt[col_fec].isin(sel_fec)]
 
@@ -258,10 +265,9 @@ if total_req > 0:
         c7, c8 = st.columns(2)
         with c7:
             st.markdown("**7. Priorización**")
-            if col_pri in df_filt.columns:
-                fig7 = px.pie(df_filt, names=col_pri, hole=0.3, color_discrete_sequence=['#ff7c43', '#ffa600', '#2f4b7c'])
-                fig7.update_layout(margin=dict(t=10, b=10, l=10, r=10))
-                st.plotly_chart(fig7, use_container_width=True)
+            fig7 = px.pie(df_filt, names=col_pri, hole=0.3, color_discrete_sequence=['#ff7c43', '#ffa600', '#2f4b7c'])
+            fig7.update_layout(margin=dict(t=10, b=10, l=10, r=10))
+            st.plotly_chart(fig7, use_container_width=True)
                 
         with c8:
             st.markdown("**8. Comparativo General**")
